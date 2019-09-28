@@ -27,6 +27,8 @@ function getFixtures(fixturesPath) {
   const REQUIRED_FILES = ["code.js", "output.js"];
   const fixtures = allFiles.reduce((acc, file) => {
     const folderName = path.dirname(file);
+    const title = path.basename(folderName);
+    if (acc.find(test => test.title === title)) return acc;
     const reqFiles = REQUIRED_FILES.map(rFile => path.join(folderName, rFile));
     reqFiles.forEach(rFile => {
       if (!fs.existsSync(rFile)) {
@@ -37,7 +39,7 @@ function getFixtures(fixturesPath) {
       sanitizeCode(fs.readFileSync(rFile).toString())
     );
 
-    return [...acc, { title: path.basename(folderName), code, output }];
+    return [...acc, { title, code, output }];
   }, []);
   return fixtures;
 }
